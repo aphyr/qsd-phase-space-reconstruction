@@ -1,0 +1,6 @@
+#!/usr/bin/ruby
+
+require File.dirname(__FILE__) + '/qm'
+include QM
+
+QM.reload

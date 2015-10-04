@@ -1,0 +1,9 @@
+#!/usr/bin/ruby
+
+# Generate delay embeddings for all series.
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+p Series.first.stddev

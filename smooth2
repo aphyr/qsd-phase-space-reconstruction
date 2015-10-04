@@ -1,0 +1,14 @@
+#!/usr/bin/ruby
+
+require File.dirname(__FILE__) + '/qm'
+include QM
+
+
+Series.raw.filter(:gamma => 0.125, :beta => 0.1)
+  series.smooth(
+    :smooth_m => 10, 
+    :smooth_q => 3, 
+    :smooth_d => 1, 
+    :smooth_i => 3
+  )
+end

@@ -1,0 +1,20 @@
+#!/usr/bin/ruby
+
+require File.dirname(__FILE__) + '/qm'
+include QM
+
+Series.strobe
+s = Series.flow.filter(:gamma => 0.125, :beta => 0.3).first.resample(5, 0)
+s2 = s.smooth(:smooth_m => 12, :smooth_q => 3, :smooth_i => 3)
+
+s.delay(:delay => 8, :dimension => 2).plot.plot
+s2.delay(:delay => 8, :dimension => 2).plot.plot
+
+(2..20).threaded_each do |delay|
+  (4..6).each do |dim|
+    s.lyapunovk(:dimension => dim, :delay => delay)
+    s2.lyapunovk(:dimension => dim, :delay => delay)
+  end
+  s.lyapunov_plot(:delay => delay).plot
+  s2.lyapunov_plot(:delay => delay).plot
+end

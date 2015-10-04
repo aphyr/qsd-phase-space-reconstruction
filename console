@@ -1,0 +1,7 @@
+#!/usr/bin/ruby
+
+require File.dirname(__FILE__) + '/qm'
+require 'irb'
+include QM
+
+IRB.start

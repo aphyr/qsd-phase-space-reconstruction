@@ -1,0 +1,53 @@
+#!/usr/bin/ruby
+
+# Generate Lyapunov comparisons for all interesting raw flows
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+tasks = Array.new(2) { |i| [] }
+threads = Array.new(2)
+
+#0.step(4000,500).each do |theiler|
+  sets = []
+  theiler = 250
+    Series.flow.raw.interesting.filter(:gamma => [0.125, 0.3], :beta => [0.01, 0.3, 1.0]).threaded_each do |series|
+      sets << series.smooth(:smooth_window => 15).resample(11, 3)
+    end
+    sets.each do |series|
+      3.upto 6 do |dimension|
+        series.lyapunovk :dimension => dimension, :delay => 17, :theiler => theiler
+      end
+    end
+#end
+
+#Collect beta/gamma values
+betas = []
+gammas = []
+theilers = []
+sets.each do |series|
+  theilers += series.lyapunovks_dataset.map(:theiler)
+  betas << series.beta
+  gammas << series.gamma
+end
+betas.uniq!.sort!
+gammas.uniq!.sort!
+theilers.uniq!.sort!
+
+#theilers.each do |theiler|
+  theiler = 250
+  plot = MultiPlot.build(betas, gammas) do |beta, gamma|
+    if series = Series.strobe.filter(:beta => beta, :gamma => gamma).first
+      series.lyapunov_plot(:theiler => theiler)
+    end
+  end
+
+  plot.term = 'postscript enhanced eps color size 14cm,16cm'
+  #plot.term = 'png'
+  #plot.width = 1600
+  #plot.height = 1200
+  plot.output = File.join(PLOT_ROOT, "Lyapunov Comparison - mod 11+3 d=17 t=#{theiler}.eps")
+  plot.title = "Trajectory Divergence Comparison: ln(separation factor) vs. t (theiler #{theiler})"
+  plot.plot
+#end

@@ -1,0 +1,41 @@
+qsd/runs/duffing_fiducial
+  src - trajectory function "traject_fiducial"
+    rolls a single trajectory
+    saves a parameter file and saves state at designated points in time
+  noise from ACG seed in the state file  
+
+duffing_gic
+  generalized initial condition
+  load arbitrary state
+  described by density matrix?
+
+  read saved state
+  produces additional state files
+  also produces an x.out
+  
+runs/LyapExp
+1 peturbed trajectory from each of the duffing_fiducial state  
+
+runs/analyzer_...
+
+Read src/traject
+Look at analyzers
+Look at drives in qsd subdir
+
+
+DYNAMICS
+Systems
+Obey stochastic diffeq
+  Consider stochastic element small -- use ODEs
+  Small perturbation in X obeys a linear ODE
+  (delta x)^2 perturbation in x negligible
+  For short times, effectively a linear diffeq for dx and dp
+  2 linear diffeqs with constant coefficients at any point in x and p
+    2 real, 2 complex conj, or 1 real duplicated
+    Simple average of eigenvalues across all system(x,p,t)
+    For complex eigenvalues, are we interested in just the exp. multiplier?
+
+Will we see limit cycles?
+analyzer_lyapexp.py finds sqrt(delta_x^2 + delta_p^2)
+
+  

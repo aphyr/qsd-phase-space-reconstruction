@@ -1,0 +1,182 @@
+module QM
+  class Series < Sequel::Model
+    include Data
+
+    # Indexing attributes
+    set_schema do
+      primary_key :id
+      column :gamma, :double
+      column :beta, :double
+      column :observable, :varchar
+      column :mod, :integer
+      column :ti, :double
+      column :tf, :double
+      column :smooth, :boolean, :null => true, :default => nil
+      column :smooth_m, :integer
+      column :smooth_q, :integer
+      column :smooth_i, :integer
+      column :smooth_d, :integer
+    end
+
+    
+
+    has_many :delays
+    has_many :lyapunovrs
+    has_many :lyapunovks
+
+    # Remove associated data before destruction
+    before_destroy do
+      delays.each     do |delay| delay.destroy end
+      lyapunovrs.each do |lyap| lyap.destroy end
+      lyapunovks.each do |lyap| lyap.destroy end
+    end
+
+    # Remove data file on destruction
+    after_destroy do
+      if File.exists? path
+        File.delete path
+      else
+        puts "#{path} already gone, not deleting."
+      end 
+    end
+
+    # Subsets
+    subset(:interesting, :beta => [0.01, 0.1, 0.3, 0.6, 1])
+    subset(:smooth, :smooth => true)
+    subset(:raw, '`smooth` is unknown or smooth is false')
+
+    # Returns the column to analyze
+    def data_column
+      columns = nil
+      File.open(path) do |f|
+        columns = f.gets.split(/\s/)
+      end
+
+      if columns.size == 1
+        1
+      else
+        2
+      end
+    end
+
+    # Compute or look up a specific delay. If more than one delay for opts is
+    # available, returns the first available.
+    def delay(opts = {})
+      if existing = Delay.filter(:series_id => id).filter(opts).first
+        # We have an existing delay for these parameters
+        existing
+      else
+        # Create a new delay
+        delay = Delay.create(opts)
+        add_delay delay
+        
+        # Run the computation
+        delay.run
+      
+        delay
+      end
+    end
+
+    # Compute or look up a specific lyapunov_r. If more than one delay for opts
+    # is available, returns the first available.
+    def lyapunovr(opts = {})
+      if existing = Lyapunovr.filter(:series_id => id).filter(opts).first
+        # We have an existing delay for these parameters
+        existing
+      else
+        # Create a new delay
+        lyapunovr = Lyapunovr.create(opts)
+        add_lyapunovr lyapunovr
+        
+        # Run the computation
+        lyapunovr.run
+      
+        lyapunovr
+      end
+    end
+
+    # Compute or look up a specific lyapunov_k. If more than one delay for opts
+    # is available, returns the first available.
+    def lyapunovk(opts = {})
+      if existing = Lyapunovk.filter(:series_id => id).filter(opts).first
+        # We have an existing delay for these parameters
+        existing
+      else
+        # Create a new delay
+        lyapunovk = Lyapunovk.create(opts)
+        add_lyapunovk lyapunovk
+        
+        # Run the computation
+        lyapunovk.run
+      
+        lyapunovk
+      end
+    end
+
+    def lyapunov_plot
+      sets = lyapunovks.map { |l| 
+        "#{Plotter.quote(l.path)} title #{Plotter.quote(l.to_s)} with lines"
+      }.join(", ")
+
+      Plot.new(sets, :title => "#{to_s} - Lyapunov", :key => 'right bottom')
+    end
+
+    def smooth?
+      if self[:smooth]
+        true
+      else
+        false
+      end
+    end
+
+    def smooth(opts = {})
+      opts = @values.merge opts
+      opts[:smooth] = true
+      opts.delete :id
+
+      if existing = Series.filter(opts).first
+        # We have an existing smoothed series
+        return existing
+      else
+        # Create a smooth copy.
+        new_series = Series.create(opts)
+
+        opts = ['ghkss', '-l', 50000]
+        if smooth_m
+          opts += ['-m', '1,' + smooth_m.to_s]
+        end
+        if smooth_q
+          opts += ['-q', smooth_q]
+        end
+        if smooth_d
+          opts += ['-d', smooth_d]
+        end
+        if smooth_i
+          opts += ['-i', smooth_i]
+        end
+        opts += ['-c', data_column, '-o', new_series.path + '.tmp', path]
+
+        puts opts.join(" ")
+        QM.run *opts
+
+        # Relocate file
+        File.rename("#{new_series.path}.tmp.#{smooth_i || 1}", new_series.path)
+
+        # Delete iterations
+        1.upto((smooth_i || 1) - 1) do |i|
+          File.delete(new_series.path + '.tmp.' + i.to_s)
+        end
+
+        return new_series
+      end
+    end
+
+    def to_s
+      s = "#{observable} g=#{gamma} b=#{beta}"
+      if smooth?
+        s << " (smooth d=#{smooth_d} m=#{smooth_m} q=#{smooth_q} i=#{smooth_i})"
+      end
+      s
+    end
+  end
+end

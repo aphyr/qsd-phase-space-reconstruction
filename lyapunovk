@@ -1,0 +1,20 @@
+#!/usr/bin/ruby
+
+# Generate delay embeddings for all series.
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+tasks = Array.new(2) { |i| [] }
+threads = Array.new(2)
+
+10.step(10, 1).each do |mod|
+  10.step(25,5).each do |delay|
+    Series.flow.interesting.threaded_each do |series|
+      3.upto 6 do |dimension|
+        series.resample(mod, 5).lyapunovk :dimension => dimension, :delay => delay
+      end
+    end
+  end
+end

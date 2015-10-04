@@ -1,0 +1,43 @@
+#!/usr/bin/ruby
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+# Collect beta/gamma values
+betas = []
+gammas = []
+Series.interesting.filter(:gamma => 0.125).filter(:beta < 0.3).each do |series|
+  betas << series.beta
+  gammas << series.gamma
+end
+betas.uniq!.sort!
+sorted_gammas = gammas.uniq.sort
+gammas = []
+sorted_gammas.each { |e| gammas += [e, e] }
+
+i = 0
+plot = MultiPlot.build(betas, gammas) do |beta, gamma|
+  if (i % 2) == 0
+    plot = Series.raw.filter(
+      :beta => beta, 
+      :gamma => gamma
+    ).first.delay(:dimension => 2, :delay => 125).plot
+  else
+    plot = Series.smooth.filter(
+      :beta => beta, 
+      :gamma => gamma
+    ).first.delay(:dimension => 2, :delay => 125).plot
+  end
+
+  i += 1
+  plot
+end
+
+plot.output = File.join(PLOT_ROOT, 'Delay Embedding Comparison.png')
+plot.width = 4000
+plot.height = 5000
+plot.width = 1600
+plot.height = 1200
+plot.title = "Delay Embedding Comparison"
+plot.plot

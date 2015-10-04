@@ -1,0 +1,51 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage{amsmath}
+
+\title{Linearized QSD Equations}
+\author{Kyle Kingsbury}
+\date{April 20$^{\mathrm{th}}$ 2009}
+
+% Standard dirac notation macros
+\newcommand{\ev}[1]{\ensuremath{\langle{}#1\rangle}}
+\newcommand{\bra}[1]{\ensuremath{\left\langle{}#1\right|}}
+\newcommand{\ket}[1]{\ensuremath{\left|#1\right\rangle}}
+\newcommand{\braket}[2]{\ensuremath{\left\langle{}#1\right|\left.#2\right\rangle}}
+
+% Bra, Lindblad, Ket
+\newcommand{\blk}[2]{\bra{#1}\lo\ket{#2}}
+% Bra, Lindblad Dagger, Ket
+\newcommand{\bltk}[2]{\bra{#1}\lot\ket{#2}}
+% Lindblad
+\newcommand{\lo}{\ensuremath{\hat{L_j}}}
+\newcommand{\lot}{\ensuremath{\hat{L_j^\dagger}}}
+
+\begin{document}
+\maketitle
+
+In generality, the linearized QSD equation for a state \ket{\psi} + \ket{a} is:
+
+\small
+
+\begin{multline}
+\ket{da} =
+\sum_j \left[
+  \bltk{\psi}{\psi}\lo\ket{a} + \bltk{\psi}{a}\lo\ket{\psi} + \bltk{a}{\psi}\lo\ket{\psi} \right.
+  -\frac{1}{2}\lot\lo\ket{a} \\
+  -\frac{1}{2}\left(
+    \bltk{\psi}{\psi}\blk{\psi}{\psi}\ket{a} +
+    \bltk{\psi}{\psi}\blk{\psi}{a}\ket{\psi} +
+    \bltk{\psi}{\psi}\blk{a}{\psi}\ket{\psi} + \right. \\ \left. \left.
+    \bltk{\psi}{a}\blk{\psi}{\psi}\ket{\psi} +
+    \bltk{a}{\psi}\blk{\psi}{\psi}\ket{\psi}
+  \right)
+\right] dt \\
++ \left[
+\lo\ket{a} - 
+\blk{\psi}{\psi}\ket{a} - 
+\blk{\psi}{a}\ket{\psi} - 
+\blk{a}{\psi}\ket{\psi}
+\right] d\xi
+\end{multline}
+
+\end{document}

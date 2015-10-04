@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+# Generate delay embeddings for all series.
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+Series.raw.flow.threaded_each do |series|
+   series.delay :dimension => 2, :delay => 125
+end

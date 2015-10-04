@@ -1,0 +1,13 @@
+#!/usr/bin/ruby
+
+require File.dirname(__FILE__) + '/qm'
+include QM
+
+Series.raw.interesting.filter(:gamma => 0.125).filter(:beta < 0.3).threaded_each do |series|
+  series.smooth(
+    :smooth_m => 10,
+    :smooth_q => 3, 
+    :smooth_d => 110,
+    :smooth_i => 1
+  )
+end

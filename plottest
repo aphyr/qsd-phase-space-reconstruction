@@ -1,0 +1,10 @@
+#!/usr/bin/ruby
+
+require 'qm/plotter'
+
+a = QM::Plot.new("x", :with => 'lines', :title => "A graph!")
+a.width = 1
+a.height = 1
+a.term = 'wxt'
+
+a.plot

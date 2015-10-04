@@ -1,0 +1,24 @@
+#!/usr/bin/ruby
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+# Collect beta/gamma values
+betas = []
+gammas = []
+Series.raw.flow.each do |series|
+  betas << series.beta
+  gammas << series.gamma
+end
+betas.uniq!.sort!
+gammas.uniq!.sort!
+
+plot = MultiPlot.build(betas, gammas) do |beta, gamma|
+  Series[:beta => beta, :gamma => gamma].delays_dataset[:delay => 125].plot
+end
+
+plot.output = File.join(PLOT_ROOT, 'Delay Embedding Comparison.png')
+plot.height = 3200
+plot.title = "Delay Embedding Comparison"
+plot.plot

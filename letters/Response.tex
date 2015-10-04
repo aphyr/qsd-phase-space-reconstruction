@@ -1,0 +1,108 @@
+%\documentclass[prl,aps,preprint,showpacs,floatfix]{revtex4}
+\documentclass[prl,aps,twocolumn,showpacs,floatfix]{revtex4}
+\usepackage{graphicx}
+
+\begin{document}
+%\title{Response to Comment on "Non-monotonicity in the quantum-classical 
+%transition: Chaos induced by quantum effects"} 
+%\author{Kyle Kingsbury$^(a)$, Christopher A. Amey$^(a)$, Arie
+%Kapulkin$^{(b)}$, and Arjendu K. Pattanayak$^{(a)}$} 
+%\date{June 2007}
+%\affiliation
+%{
+%} 
+%\begin{abstract}
+%\end{abstract}
+%\pacs{PACS numbers: 05.45.Mt,03.65.Sq}
+%\maketitle
+
+The work by Finn et al further investigating our system is indeed relevant. 
+They calculate maximum Lyapunov exponents ($\lambda_m$) showing 
+monotonic suppression of chaos as $\beta$ is increased for $\Gamma = 0.125$, 
+and no chaos for $\Gamma=0.3$.  Their results are extremely puzzling, 
+particularly the complete absence of chaos for the $\Gamma = 0.3$ case, 
+and definitely inconsistent with us. 
+
+We worked with the in-principle experimentally accessible time-series. 
+Poincar\'e sections indicate, for $\Gamma = 0.125$, a chaotic attractor 
+at $\beta = 0.01$, which is altered but persists for $\beta = 0.3$ 
+and disappears for $\beta = 0.1$. The power spectra for 
+$\langle \hat X(t) \rangle$ agree, indicating chaos for the first two cases 
+and no chaos for the last. For $\Gamma = 0.3$, we see no $\beta = 0.01$ 
+chaos, an attractor for $\beta = 0.3$, which disappears for $\beta = 0.1$, 
+in agreement with the power spectra. Further, the $\beta = 0.3$ results
+look extremely similar for the two $\Gamma$ cases. The specific disagreement 
+with Finn et al is the $\Gamma=0.3,\beta=0.3$ case, and also that their 
+results are so different for the two $\beta = 0.3$ cases. 
+
+We have since worked with the TISEAN package, using phase-space delay 
+reconstruction of $\langle \hat X(t) \rangle$ to obtain $\lambda_m$, as 
+shown in the attached figure. Each plot shows the average divergence of 
+nearby points in the reconstructed phase space for $X$, on a log scale. 
+Exponential growth appears as linearity before the trajectories reach 
+saturation; the slope is proportional to $\lambda_m$. The delay embedding 
+dimension is indicated by $m$. For each dimension, several graphs are 
+shown, corresponding to different neighborhood 
+choices in the reconstructed phase space. We see qualitative agreement 
+with our previous results. Because of the form of the sampling in TISEAN, 
+a raw slope from these figures needs to be divided by (interval * modulo) = 
+$(0.01 * 11)$ to find $\lambda_m$. We estimate $\lambda_m$ for respective 
+$(\Gamma, \beta)$ pairs (approximately, since they derive
+from finding the slope of the straight line parts of these curves) as:
+$(0.125,0.01) = 0.1, (0.125,0.3) = 0.16, (0.125,1.0) < 0.05,
+(0.3,0.01) < 0.03, (0.3,0.3) = 0.13, (0.3,1.0) < 0.05$. In short,
+this agrees with our previous conclusions about where chaos exists. 
+Interestingly, using $\lambda_m$, the transition from quantum to
+classical behavior appears to be non-monotonic for BOTH instances of
+$\Gamma$.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=8.3cm,height=10.8cm,clip]
+{TimeSeriesLyapunov.eps}}
+\caption{
+}
+\label{figsix}
+\end{figure}
+
+Our three methods of analysis (Poincar\'e sections, power spectra, and 
+time-series Lyapunov exponents) are all consistent with each other, and 
+consistent with our physical understanding of how the chaos emerges 
+and/or is swamped by quantum effects, and Finn et al's calculation is 
+inconsistent with this for the one 'mesoscopic' case of 
+$(\Gamma,\beta) =(0.3,0.3)$. The difference is intriguing. We expect that 
+understanding the source of this difference -- provided it is not due 
+to technical errors -- will help us in understanding something deeper about 
+the physics, or about the methods of analysis.  Behind the immediate questions 
+about the behavior of this model system stands the larger and fundamental 
+question of whether quantum corrections always regularize and suppress 
+chaotic dynamics. We believe that this, while often true, is not universal. 
+For the QSD equations (or equivalent stochastic Schrodinger equations), 
+that such a highly nonlinear equation has a priori a monotonic parameter 
+landscape is extremely unlikely. Our perspective is supported by 
+Bhattacharyya et al [our ref 14] showing that the diffusion rate for the
+kicked rotor (a measure of the chaos in the system) can increase into
+the quantum regime. It is only a matter of more systematic investigation
+to find other such counter-examples to the folklore.
+
+Kyle Kingsbury$^{(a)}$
+
+Chris Amey$^{(a)}$
+
+Arie Kapulkin$^{(a)}$
+
+Arjendu Pattanayak$^{(a)}$
+
+{(a) Department of Physics and Astronomy, \\
+Carleton College, Northfield, Minnesota 55057
+\\
+(b) 128 Rockwood Cr, Thornhill, Ont L4J 7W1 Canada}
+
+\begin{thebibliography}{99}
+
+\bibitem{brun} T.A. Brun, I.C. Percival, and R. Schack, J. Phys. A {\bf
+29}, 2077 (1996).
+\bibitem{salman} T. Bhattacharya, S. Habib, and K. Jacobs, \prl {\bf
+85}, 4852 (2000); S. Habib, K. Jacobs and K. Shizume, 
+\prl {\bf 96}, 010403 (2006).
+\end{thebibliography}
+\end{document}

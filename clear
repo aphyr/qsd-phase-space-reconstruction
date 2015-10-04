@@ -1,0 +1,18 @@
+#!/usr/bin/ruby
+
+# Clear all smoothed series and delays.
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+foo = []
+foo += Series.smooth.all
+foo += Delay.all
+foo += Series.strobe.all
+foo += Lyapunovk.all
+
+foo.each do |f|
+  puts "Destroying #{f}"
+  f.destroy
+end

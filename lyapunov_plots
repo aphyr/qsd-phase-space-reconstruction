@@ -1,0 +1,36 @@
+#!/usr/bin/ruby
+
+# Generate delay embeddings for all series.
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+# Collect beta/gamma values
+delays = []
+betas = []
+gammas = []
+tis = []
+Series.strobe.interesting.all.each do |series|
+  delays += series.lyapunovks_dataset.map(:delay)
+  tis << series.ti
+  betas << series.beta
+  gammas << series.gamma
+end
+tis.uniq!.sort
+betas.uniq!.sort!
+gammas.uniq!.sort!
+delays.uniq!.sort!
+
+tis.each do |ti|
+  delays.each do |delay|
+    plot = MultiPlot.build(betas, gammas) do |beta, gamma|
+      Series.strobe.filter(:beta => beta, :gamma => gamma, :ti => ti).first.lyapunov_plot(:delay => delay)
+    end
+  
+    plot.output = File.join(PLOT_ROOT, "Lyapunov Comparison (delay #{delay}) (ti #{ti}.png")
+    plot.height = 3200
+    plot.title = "Trajectory Divergence Comparison: ln(separation factor) vs. t (delay #{delay}) (ti #{ti})"
+    plot.plot
+  end
+end

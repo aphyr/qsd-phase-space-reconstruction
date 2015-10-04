@@ -1,0 +1,15 @@
+#!/usr/bin/ruby
+
+# Generate delay embeddings for all series.
+
+require File.dirname(__FILE__) + '/qm'
+
+include QM
+
+Series.interesting.each do |series|
+  2.upto 3 do |dimension|
+    25.step(500, 25) do |delay|
+      series.lyapunovr :dimension => dimension, :delay => delay
+    end
+  end
+end
